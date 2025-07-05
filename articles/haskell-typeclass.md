@@ -1,6 +1,6 @@
 ---
 title: "[Haskell] 型クラスについて"
-emoji: "💠"
+emoji: "📓"
 type: "tech"
 topics: ["haskell", "初心者", "memo", "学習メモ"]
 published: true
