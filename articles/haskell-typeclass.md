@@ -145,7 +145,7 @@ instance Shape Rectangle where
 
 #### 既存のデータ型に対して、後から制約をつけることができる
 
-`MyNum`型を作成して、`Int`に対して、`add`関数の制約を追加します。
+`MyNum`型クラスを作成して、`Int`に対して`add`関数を追加する
 
 ```haskell
 class MyNum a where
@@ -165,14 +165,16 @@ main = do
 
 #### データ型に関係なく、同じ関数名で処理できる
 
+`Shape`（図形）型クラスを作成して、`Triangle`と`Rectangle`にそれぞれ`calculateArea`関数を実装する
+
 ```haskell
 -- 三角形（底辺, 高さ）
 data Triangle = Triangle Int Int deriving Show
 
 -- 四角形（幅、高さ）
-data Square = Square Int Int deriving Show
+data Rectangle = Rectangle Int Int deriving Show
 
--- 図形クラス
+-- 図形型クラス
 class Shape a where
   calculateArea:: a -> Int
 
@@ -180,20 +182,20 @@ class Shape a where
 instance Shape Triangle where
   calculateArea (Triangle base height) = (base * height) `div` 2
 
-instance Shape Square where
-  calculateArea (Square width height) = width * height
+instance Shape Rectangle where
+  calculateArea (Rectangle width height) = width * height
 
 
 -- 使用例
 triangle::Triangle
 triangle = Triangle 2 4
 
-square::Square
-square = Square 2 4
+rectangle::Rectangle
+rectangle = Rectangle 2 4
 
 main = do
   putStrLn $ show $ calculateArea triangle -- 結果: 4
-  putStrLn $ show $ calculateArea square -- 結果: 8
+  putStrLn $ show $ calculateArea rectangle -- 結果: 8
 ```
 
 ## 参考
