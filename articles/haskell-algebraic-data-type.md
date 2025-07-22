@@ -49,7 +49,13 @@ data Shape = Rectangle Int Int
 
 ## カインド（種）
 
-カインドとは、**型の型**の様なものであり、型引数を受け取らない Int は`*`で表される。
+カインドとは、大雑把にいうと「**型を分類**」を表す。  
+haskell のカインドには、以下の 2 つの規則がある。
+
+- 1. `*`は、全ての**データ型**のカインドである。
+- 2. `k1 -> k2` は、k1 のカインドを持つ型を受け取り、k2 のカインドの型を生成する。
+
+https://ja.wikipedia.org/wiki/%E3%82%AB%E3%82%A4%E3%83%B3%E3%83%89_(%E5%9E%8B%E7%90%86%E8%AB%96)
 
 ## 参考
 
@@ -57,3 +63,5 @@ https://haskell.jp/blog/posts/2020/how-to-use-type-newtype-data.html
 http://walk.northcol.org/haskell/adts/
 https://qiita.com/7shi/items/1ce76bde464b4a55c143
 https://qiita.com/tobita_yoshiki/items/a2ffd2cefa53376338c6
+https://zenn.dev/mod_poppo/books/haskell-type-level-programming/viewer/types-and-kinds
+https://ja.wikipedia.org/wiki/%E3%82%AB%E3%82%A4%E3%83%B3%E3%83%89_(%E5%9E%8B%E7%90%86%E8%AB%96)
