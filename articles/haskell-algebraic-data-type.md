@@ -57,6 +57,8 @@ haskell のカインドには、以下の 2 つの規則がある。
 
 kind は`:k`または`:kind`を使用することで確認できる。
 
+https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts/poly_kinds.html#the-kind-type
+
 ### 具体例
 
 #### (1) 型を受け取らない型（具体型）
