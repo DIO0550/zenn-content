@@ -55,9 +55,20 @@ haskell のカインドには、以下の 2 つの規則がある。
 - 1. （A）`*`は、全ての**データ型**（値を持つことのできる）のカインドである。
 - 2. （B）`k1 -> k2` は、k1 のカインドを持つ型を受け取り、k2 のカインドの型を生成する。
 
-kind は`:k`または`:kind`を使用することで確認できる。
+:::message
+GHC 8 以降は、以下の理由から、カインドを表す際に、`*`ではなく`Type`を使用することを推奨しています。
 
-https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts/poly_kinds.html#the-kind-type
+主な理由
+
+- 型レベルでの乗算の演算子`*`と競合する
+- 項と型を統一する際に支障がある
+- 可読性の問題(`*`は、ワイルドカードや Markdown の箇条書きなどで使用されているため)など
+
+参考
+[GHC Proposal #143](https://ghc-proposals.readthedocs.io/en/latest/proposals/0143-remove-star-kind.html)
+:::
+
+kind は`:k`または`:kind`を使用することで確認できる。
 
 ### 具体例
 
@@ -95,3 +106,7 @@ https://qiita.com/7shi/items/1ce76bde464b4a55c143
 https://qiita.com/tobita_yoshiki/items/a2ffd2cefa53376338c6
 https://zenn.dev/mod_poppo/books/haskell-type-level-programming/viewer/types-and-kinds
 https://ja.wikipedia.org/wiki/%E3%82%AB%E3%82%A4%E3%83%B3%E3%83%89_(%E5%9E%8B%E7%90%86%E8%AB%96)
+
+https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts/poly_kinds.html#overview-of-type-in-type
+https://zenn.dev/mod_poppo/books/haskell-type-level-programming/viewer/types-and-kinds
+https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts/poly_kinds.html#the-kind-type
