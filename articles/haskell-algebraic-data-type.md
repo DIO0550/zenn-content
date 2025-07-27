@@ -25,6 +25,66 @@ published: false
 data 型コンストラクタ（型名） 型変数 = 値コンストラクタ
 ```
 
+## 型コンストラクタと値コンストラクタ
+
+https://wiki.haskell.org/Constructor#Type_constructor
+
+### 型コンストラクタ
+
+型コンストラクタは、型を受け取り、新しい型を返す。
+型コンストラクタは、0 個以上の引数を受け取ることができる。
+
+#### 例
+
+- 0 個の引数：`Bool`、`Int`
+- 1 個の引数：`Maybe`、`[]`
+- 2 個の引数：`Either`
+
+```
+
+```
+
+### 値コンストラクタ（データコンストラクタ）
+
+値コンストラクタは、値を受け取り、新しい値を返す。
+値コンストラクタは、0 個以上の引数を受け取ることができる。
+また、値をグループ化して、代数的データ型にタグを付ける。
+引数を受け取らないコンストラクタは、定数や空のコンストラクタと呼ばれる？
+
+#### 例
+
+```haskell
+
+-- 引数：なし
+-- Red、Blue、Greenが値コンストラクタに該当
+data Color = Red | Blue | Green
+
+-- 引数：あり
+-- 以下が値コンストラクタ
+-- Circle Int
+-- Rect Int Int
+-- Triangle Int Int
+data Shape = Circle Int | Square Int |　Triangle Int Int
+
+```
+
+#### 関数として扱う
+
+値コンストラクタは、関数として扱うことができる。
+
+```haskell
+data Shape = Circle Int | Square Int | Triangle Int Int deriving Show
+
+sides:: [Int]
+sides = [2,4,6]
+squares :: [Shape]
+squares = map Square sides
+
+main = do
+    print squares -- [Square 2,Square 4,Square 6]
+
+```
+
 ### 直積型
 
 #### 例
@@ -90,10 +150,13 @@ String :: *
 
 ```haskell
 ghci> :k Maybe
-Maybe :: * -> *
+Maybe :: * -> * -- 1つの型を受け取る
 
 ghci> :k []
-[] :: * -> *
+[] :: * -> * -- 1つの型を受け取る
+
+ghci> :k Either
+Either :: * -> * -> *  -- 2つの型を受け取る
 ```
 
 https://ja.wikipedia.org/wiki/%E3%82%AB%E3%82%A4%E3%83%B3%E3%83%89_(%E5%9E%8B%E7%90%86%E8%AB%96)
