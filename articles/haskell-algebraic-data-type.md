@@ -27,8 +27,6 @@ data 型コンストラクタ（型名） 型変数 = 値コンストラクタ
 
 ## 型コンストラクタと値コンストラクタ
 
-https://wiki.haskell.org/Constructor#Type_constructor
-
 ### 型コンストラクタ
 
 型コンストラクタは、型を受け取り、新しい型を返す。
@@ -36,12 +34,30 @@ https://wiki.haskell.org/Constructor#Type_constructor
 
 #### 例
 
-- 0 個の引数：`Bool`、`Int`
-- 1 個の引数：`Maybe`、`[]`
-- 2 個の引数：`Either`
+```haskell
+-- 引数なし（具体型）
+data Bool = False | True
+--   ^^^^ 型コンストラクタ
 
-```
+data Color = Red | Green | Blue
+--   ^^^^^ 型コンストラクタ
 
+-- 引数1つ
+data Maybe a = Nothing | Just a
+--   ^^^^^ 型コンストラクタ（1引数）
+
+data Box a = Box a
+--   ^^^ 型コンストラクタ（1引数）
+
+-- 引数2つ
+data Either a b = Left a | Right b
+--   ^^^^^^ 型コンストラクタ（2引数）
+
+data Pair a b = Pair a b
+--   ^^^^ 型コンストラクタ（2引数）
+
+data First a b = First a
+--   ^^^^^ 型コンストラクタ（2引数）
 ```
 
 ### 値コンストラクタ（データコンストラクタ）
@@ -54,18 +70,22 @@ https://wiki.haskell.org/Constructor#Type_constructor
 #### 例
 
 ```haskell
-
 -- 引数：なし
 -- Red、Blue、Greenが値コンストラクタに該当
 data Color = Red | Blue | Green
+--   ^^^^^ 型コンストラクタ
+--           ^^^ ^^^^ ^^^^^ 値コンストラクタ（引数なし）
 
 -- 引数：あり
 -- 以下が値コンストラクタ
 -- Circle Int
 -- Rect Int Int
 -- Triangle Int Int
-data Shape = Circle Int | Square Int |　Triangle Int Int
-
+data Shape = Circle Int | Square Int | Triangle Int Int
+--   ^^^^^ 型コンストラクタ
+--           ^^^^^^ 値コンストラクタ（Int -> Shape）
+--                        ^^^^^^ 値コンストラクタ（Int -> Shape）
+--                                      ^^^^^^^^ 値コンストラクタ（Int -> Int -> Shape）
 ```
 
 #### 関数として扱う
@@ -163,6 +183,7 @@ https://ja.wikipedia.org/wiki/%E3%82%AB%E3%82%A4%E3%83%B3%E3%83%89_(%E5%9E%8B%E7
 
 ## 参考
 
+https://wiki.haskell.org/Constructor#Type_constructor
 https://haskell.jp/blog/posts/2020/how-to-use-type-newtype-data.html
 http://walk.northcol.org/haskell/adts/
 https://qiita.com/7shi/items/1ce76bde464b4a55c143
