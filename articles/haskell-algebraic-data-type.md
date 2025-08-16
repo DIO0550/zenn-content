@@ -17,6 +17,36 @@ published: false
 - 複数の型を合わせて、新しく作成した型（直積型）
 - 複数の型を合わせて、いずれか１つの型を持つ型（直和型）
 
+### 直積型
+
+他の言語の`構造体`のようなデータ型。
+複数の型を記述し、記述した型のそれぞれの値を合わせ持つ新しい型を生成する。
+以下の例では、2 つの`Int`の値を保持する`Point`型を新しく作成している
+
+#### 例
+
+```haskell
+data Point = Point Int Int
+```
+
+### 直和型
+
+他の言語の `Union 型`のようなデータ型。
+`|`で区切って記述した複数の選択肢の内、いずれか 1 つを値として取る新しい型を生成する。
+以下の例では、曜日の値のどれかを保持する型を新しく作成している
+
+#### 例
+
+```haskell
+data DayOfWeek = Mon | Tue | Wed | Thu | Fri | Sat | Sun
+```
+
+### 直積 + 直和
+
+```haskell
+data Shape = Rectangle Int Int
+```
+
 ## 代数的データ型の定義
 
 代数的データ型の基本的な定義は、以下になる。
@@ -29,13 +59,13 @@ data 型コンストラクタ（型名） 型変数 = 値コンストラクタ
 
 ### 型コンストラクタ
 
-型コンストラクタは、型を受け取り、新しい型を返す。
+型コンストラクタは、型を受け取り新しい型を返す。  
 型コンストラクタは、0 個以上の引数を受け取ることができる。
 
 #### 例
 
 ```haskell
--- 引数なし（具体型）
+-- 引数なし
 data Bool = False | True
 --   ^^^^ 型コンストラクタ
 
@@ -62,10 +92,9 @@ data First a b = First a
 
 ### 値コンストラクタ（データコンストラクタ）
 
-値コンストラクタは、値を受け取り、新しい値を返す。
-値コンストラクタは、0 個以上の引数を受け取ることができる。
-また、値をグループ化して、代数的データ型にタグを付ける。
-引数を受け取らないコンストラクタは、定数や空のコンストラクタと呼ばれる？
+値コンストラクタは、値を受け取り新しい値を返す。  
+値コンストラクタは、0 個以上の引数を受け取ることができる。  
+値をグループ化して、代数的データ型が取り得る値の種類を定義し、実際の値の生成にも使用される。
 
 #### 例
 
@@ -88,9 +117,9 @@ data Shape = Circle Int | Square Int | Triangle Int Int
 --                                      ^^^^^^^^ 値コンストラクタ（Int -> Int -> Shape）
 ```
 
-#### 関数として扱う
+#### 関数として使用して、値を生成する
 
-値コンストラクタは、関数として扱うことができる。
+値コンストラクタは、関数として使用して、値を生成することができる。
 
 ```haskell
 data Shape = Circle Int | Square Int | Triangle Int Int deriving Show
@@ -103,28 +132,6 @@ squares = map Square sides
 main = do
     print squares -- [Square 2,Square 4,Square 6]
 
-```
-
-### 直積型
-
-#### 例
-
-```haskell
-data Point = Point Int Int
-```
-
-### 直和型
-
-#### 例
-
-```haskell
-data DayOfWeek = Mon | Tue | Wed | Thu | Fri | Sat | Sun
-```
-
-### 直積 + 直和
-
-```haskell
-data Shape = Rectangle Int Int
 ```
 
 ## カインド（種）
@@ -194,3 +201,4 @@ https://ja.wikipedia.org/wiki/%E3%82%AB%E3%82%A4%E3%83%B3%E3%83%89_(%E5%9E%8B%E7
 https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts/poly_kinds.html#overview-of-type-in-type
 https://zenn.dev/mod_poppo/books/haskell-type-level-programming/viewer/types-and-kinds
 https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts/poly_kinds.html#the-kind-type
+https://takafumi-s.hatenablog.com/entry/2015/09/25/123335
