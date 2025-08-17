@@ -191,19 +191,22 @@ ghci> :k Either
 Either :: * -> * -> *  -- 2つの型を受け取る
 ```
 
-https://ja.wikipedia.org/wiki/%E3%82%AB%E3%82%A4%E3%83%B3%E3%83%89_(%E5%9E%8B%E7%90%86%E8%AB%96)
-
 ## 参考
 
-https://wiki.haskell.org/Constructor#Type_constructor
-https://haskell.jp/blog/posts/2020/how-to-use-type-newtype-data.html
+### データ型
+
 http://walk.northcol.org/haskell/adts/
 https://qiita.com/7shi/items/1ce76bde464b4a55c143
-https://qiita.com/tobita_yoshiki/items/a2ffd2cefa53376338c6
-https://zenn.dev/mod_poppo/books/haskell-type-level-programming/viewer/types-and-kinds
-https://ja.wikipedia.org/wiki/%E3%82%AB%E3%82%A4%E3%83%B3%E3%83%89_(%E5%9E%8B%E7%90%86%E8%AB%96)
 
-https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts/poly_kinds.html#overview-of-type-in-type
+### コンストラクタ
+
+https://wiki.haskell.org/Constructor#Type_constructor
 https://zenn.dev/mod_poppo/books/haskell-type-level-programming/viewer/types-and-kinds
-https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts/poly_kinds.html#the-kind-type
 https://takafumi-s.hatenablog.com/entry/2015/09/25/123335
+
+### カインド
+
+https://ja.wikipedia.org/wiki/%E3%82%AB%E3%82%A4%E3%83%B3%E3%83%89_(%E5%9E%8B%E7%90%86%E8%AB%96)
+https://qiita.com/tobita_yoshiki/items/a2ffd2cefa53376338c6
+https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts/poly_kinds.html#overview-of-type-in-type
+https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts/poly_kinds.html#the-kind-type
