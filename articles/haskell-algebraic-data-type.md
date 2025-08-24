@@ -3,23 +3,23 @@ title: "[Haskell]：代数的データ型"
 emoji: "📓"
 type: "tech"
 topics: ["haskell", "初心者", "memo", "学習メモ"]
-published: false
+published: true
 ---
 
 ## はじめに
 
-ファンクタを理解するために、代数的データ型や型コンストラクタを知る必要があるため、自分なりに調べてみた。
+ファンクタを理解するために、代数的データ型や型コンストラクタを知る必要があったため、自分なりに調べてみた。
 
 ## 代数的データ型とは
 
 代数的データ型とは、以下の２つの型を組み合わせたものである。
 
-- 直積型：複数の型を合わせて、新しく作成した型
-- 直和型：複数の型を合わせて、いずれか１つの型を持つ型
+- 直積型：複数の型を組み合わせて、新しく作成した型
+- 直和型：複数の型を組み合わせて、いずれか１つの型を持つ型
 
 ### 直積型
 
-他の言語の`構造体`のようなデータ型。
+他の言語の`構造体`に似たデータ型。
 複数の型を記述し、記述した型のそれぞれの値を合わせ持つ新しい型を生成する。
 以下の例では、2 つの`Int`の値を保持する`Point`型を新しく作成している
 
@@ -31,7 +31,7 @@ data Point = Point Int Int
 
 ### 直和型
 
-他の言語の `Union 型`のようなデータ型。
+他の言語の `Union 型`に似たデータ型。
 `|`で区切って記述した複数の選択肢の内、いずれか 1 つを値として取る新しい型を生成する。
 以下の例では、曜日の値のどれかを保持する`DayOfWeek`型を新しく作成している
 
@@ -44,7 +44,7 @@ data DayOfWeek = Mon | Tue | Wed | Thu | Fri | Sat | Sun
 ### 直積型 + 直和型
 
 直積型と直和型を組み合わせて、新しいデータ型を定義することもできる。
-以下の例では、`Circle`型、`Rect`型、`Triangle`型のいずれかの値を保持する`Shape`型を新しく作成している
+以下の例では、`Circle`型、`Rect`型、`Triangle`型のいずれかの形を表現する`Shape`型を新しく作成している
 
 ```haskell
 data Shape = Circle Int -- 円（半径）
@@ -58,6 +58,13 @@ data Shape = Circle Int -- 円（半径）
 
 ```haskell
 data 型コンストラクタ（型名） 型変数 = 値コンストラクタ
+
+-- 例
+data Maybe a = Nothing | Just a
+-- Mayby：型名
+-- a：型変数
+-- Nothing：値コンストラクタ
+-- Just：値コンストラクタ
 ```
 
 ## 型コンストラクタと値コンストラクタ
@@ -115,11 +122,11 @@ data Color = Red | Blue | Green
 -- Circle Int
 -- Rect Int Int
 -- Triangle Int Int
-data Shape = Circle Int | Square Int | Triangle Int Int
+data Shape = Circle Int | Rect Int Int  | Triangle Int Int
 --   ^^^^^ 型コンストラクタ
 --           ^^^^^^ 値コンストラクタ（Int -> Shape）
---                        ^^^^^^ 値コンストラクタ（Int -> Shape）
---                                      ^^^^^^^^ 値コンストラクタ（Int -> Int -> Shape）
+--                        ^^^^ 値コンストラクタ（Int -> Int -> Shape）
+--                                       ^^^^^^^^ 値コンストラクタ（Int -> Int -> Shape）
 ```
 
 #### 関数として使用して、値を生成する
@@ -127,22 +134,21 @@ data Shape = Circle Int | Square Int | Triangle Int Int
 値コンストラクタは、関数として使用して、値を生成することができる。
 
 ```haskell
-data Shape = Circle Int | Square Int | Triangle Int Int deriving Show
+data Shape = Circle Int | Rect Int Int| Triangle Int Int deriving Show
 
-sides:: [Int]
-sides = [2,4,6]
-squares :: [Shape]
-squares = map Square sides
+radii :: [Int]
+radii = [2, 4, 6]
+circles :: [Shape]
+circles = map Circle radii
 
 main = do
-    print squares -- [Square 2,Square 4,Square 6]
-
+    print circles -- [Circle 2,Circle 4,Circle 6]
 ```
 
 ## カインド（種）
 
 カインドとは、大雑把にいうと「**型の分類**」です。  
-haskell のカインドには、以下の 2 つの規則がある。
+Haskell のカインドには、以下の 2 つの規則がある。
 
 - 1. （A）`*`は、全ての**データ型**（値を持つことのできる）のカインドである。
 - 2. （B）`k1 -> k2` は、k1 のカインドを持つ型を受け取り、k2 のカインドの型を生成する。
