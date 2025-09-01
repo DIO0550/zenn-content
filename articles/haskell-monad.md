@@ -25,12 +25,13 @@ Haskell は、`純粋関数型言語`であり、以下のような特徴があ�
 
 ## ファンクタ
 
-https://www.nct9.ne.jp/m_hiroi/func/haskell14.html
 モナドを理解するのに、まずはモナドに関わりのあるファンクタ(functor)という型クラスについても理解する必要があります。
+ファンクタは、簡単に説明すると「箱に入っている値に対して関数を適用して別の値にする処理を提供する」型クラスになります。
+ここでいう「箱」とは、`Maybe`、`[]`（リスト）、`Either e` のような、型引数を「1 つ」受け取る型コンストラクタのことを指します。
+「箱に入った値」とは、`Just 5`、`[1,2,3]`、`Right "hello"` のような、型コンストラクタ（Maybe や []）によって定義された型の実際の値のことを指します。
 
 ### 定義
 
-https://wiki.haskell.org/index.php?title=Functor
 ファンクタは以下のように定義されています。
 
 ```haskell
@@ -38,13 +39,14 @@ class Functor f where
     fmap :: (a -> b) -> f a -> f b
 ```
 
-// TODO: ここもう少し理解を深める
-この定義の意味は、`fmap`関数が
+この型クラスの定義は、以下になります。
 
-「a を引数にして、b を返す」関数を受け取り
-「コンテナ f に包まれた a」を「コンテナ f に包まれた b」に変換する
+- 型クラス Functor は、型変数 f を受け取る
+- `fmap`関数が「a を引数にして、b を返す」関数を受け取り、「コンテナ f に包まれた a」を「コンテナ f に包まれた b」に変換する
 
-ここで、fmap とは、リストを操作する際に使用する map 関数を、リスト以外にも使用できるように一般化したものです。
+### 例
+
+TODO: 自分で作った型を使うのもいいかも
 
 ## アプリケイティブ
 
@@ -63,6 +65,12 @@ https://www.infoq.com/jp/articles/Understanding-Monads-guide-for-perplexed/
 http://walk.northcol.org/haskell/overview/
 
 ## 参考
+
+### ファンクタ
+
+- https://www.nct9.ne.jp/m_hiroi/func/haskell14.html
+- https://wiki.haskell.org/index.php?title=Functor
+- https://qiita.com/suin/items/0255f0637921dcdfe83b
 
 - https://www.infoq.com/jp/articles/Understanding-Monads-guide-for-perplexed/
 - https://qiita.com/kerupani129/items/333155e5e2dee644d6dc
