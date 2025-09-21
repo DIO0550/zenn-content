@@ -46,7 +46,17 @@ class Functor f where
 
 ### 例
 
-TODO: 自分で作った型を使うのもいいかも
+```haskell
+convertIntToString :: Int -> String
+convertIntToString x = "Number: " ++ show x
+
+data Box a = Box a deriving Show
+
+  fmap function (Box value) = Box (function value)
+  --   ^^^^^^^^      ^^^^^         ^^^^^^^^ ^^^^^
+  --   関数(a->b)    中身のa        関数適用  結果はb
+
+```
 
 ## アプリケイティブ
 
