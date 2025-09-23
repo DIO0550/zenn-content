@@ -46,15 +46,24 @@ class Functor f where
 
 ### 例
 
+以下の例は、型引数を 1 つ受け取る型`Box`を定義し、それを Functor 型クラスのインスタンスにして、`fmap`関数を実行してみたものになります。
+
 ```haskell
 convertIntToString :: Int -> String
 convertIntToString x = "Number: " ++ show x
 
 data Box a = Box a deriving Show
-
+instance Functor Box where
   fmap function (Box value) = Box (function value)
   --   ^^^^^^^^      ^^^^^         ^^^^^^^^ ^^^^^
   --   関数(a->b)    中身のa        関数適用  結果はb
+
+box10 :: Box Int
+box10 = Box 10
+
+main :: IO ()
+main = do
+    print (fmap convertIntToString box10 ) -- Box "Number: 10"
 
 ```
 
