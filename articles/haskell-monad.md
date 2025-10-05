@@ -23,16 +23,27 @@ Haskell は、`純粋関数型言語`であり、以下のような特徴があ�
 
 このように副作用を伴う計算を行うために、Hskell ではモナドを使用します。
 
-## ファンクタ
+## Functor
 
-モナドを理解するのに、まずはモナドに関わりのあるファンクタ(functor)という型クラスについても理解する必要があります。  
-ファンクタは、簡単に説明すると「箱に入っている値に対して関数を適用して別の値にする処理を提供する」型クラスになります。  
+モナドを理解するのに、まずはモナドに関わりのある Functor(functor)という型クラスについても理解する必要があります。  
+Functor は、簡単に説明すると「箱に入っている値に対して関数を適用して別の値にする処理を提供する」型クラスになります。  
 ここでいう「箱」とは、`Maybe`、`[]`（リスト）、`Either e` のような、型引数を「1 つ」受け取る型コンストラクタのことを指します。  
 「箱に入った値」とは、`Just 5`、`[1,2,3]`、`Right "hello"` のような、型コンストラクタ（Maybe や []）によって定義された型の実際の値のことを指します。
 
+## Funtor 則
+
+TODO: 次ここかく
+
+- https://wiki.haskell.org/index.php?title=Functor
+- https://qiita.com/airtoxin/items/47327e9f8f5fa8d92e2d
+
+### 法則１
+
+### 法則２
+
 ### 定義
 
-ファンクタは以下のように定義されています。
+Functor は以下のように定義されています。
 
 ```haskell
 class Functor f where
@@ -67,7 +78,7 @@ main = do
 
 ```
 
-## アプリケイティブ
+## Applicative
 
 次に、重要になるのが、Applicative です。
 Applicative は、Functor とモナドの間の処理を行う型クラスで、Functor のサブクラスに当たります。
@@ -89,20 +100,44 @@ pure 関数は、単純に a の値を f で包む関数になります。
 
 ##### 例
 
+```haskell
+instance Applicative Box where
+  pure = Box
+  Box f <*> Box a = Box (f a)
+
+main :: IO ()
+main = do
+    print (pure 20 :: Box Int) -- Box 20
+```
+
 #### (<\*>) :: f (a -> b) -> f a -> f b
 
 型変数 f の型コンストラクタに包まれた関数(a → b)を、同じ f に包まれた値 a に適用して、f に包まれた結果 b を返す演算子です。
 
 ##### 例
 
-## モナドとは
+```haskell
+instance Applicative Box where
+  pure = Box
+  Box f <*> Box a = Box (f a)
 
-https://www.infoq.com/jp/articles/Understanding-Monads-guide-for-perplexed/
-http://walk.northcol.org/haskell/overview/
+box10 :: Box Int
+box10 = Box 10
+
+
+boxDouble :: Box (Int -> Int)
+boxDouble = Box (* 2)
+
+someFunc :: IO ()
+someFunc = do
+    print (boxDouble <*> box10) -- Box 20
+```
+
+## モナドとは
 
 ## 参考
 
-### ファンクタ
+### Functor
 
 - https://www.nct9.ne.jp/m_hiroi/func/haskell14.html
 - https://wiki.haskell.org/index.php?title=Functor
@@ -112,6 +147,7 @@ http://walk.northcol.org/haskell/overview/
 - https://qiita.com/kerupani129/items/333155e5e2dee644d6dc
 - http://walk.northcol.org/haskell/monads/
 - https://www.tohoho-web.com/ex/haskell.html
+- https://qiita.com/airtoxin/items/47327e9f8f5fa8d92e2d
 
 ### アプリケイティブ
 
@@ -119,3 +155,9 @@ http://walk.northcol.org/haskell/overview/
 - https://scrapbox.io/haskell-shoen/Applicative
 - https://haskell.jp/blog/posts/2019/regex-applicative.html
 - https://qiita.com/masaki_shoji/items/930434432fc3764685ba
+
+### モナド
+
+- https://www.infoq.com/jp/articles/Understanding-Monads-guide-for-perplexed/
+
+- http://walk.northcol.org/haskell/overview/
