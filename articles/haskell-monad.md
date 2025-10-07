@@ -30,17 +30,6 @@ Functor は、簡単に説明すると「箱に入っている値に対して関
 ここでいう「箱」とは、`Maybe`、`[]`（リスト）、`Either e` のような、型引数を「1 つ」受け取る型コンストラクタのことを指します。  
 「箱に入った値」とは、`Just 5`、`[1,2,3]`、`Right "hello"` のような、型コンストラクタ（Maybe や []）によって定義された型の実際の値のことを指します。
 
-## Funtor 則
-
-TODO: 次ここかく
-
-- https://wiki.haskell.org/index.php?title=Functor
-- https://qiita.com/airtoxin/items/47327e9f8f5fa8d92e2d
-
-### 法則１
-
-### 法則２
-
 ### 定義
 
 Functor は以下のように定義されています。
@@ -77,6 +66,47 @@ main = do
     print (fmap convertIntToString box10 ) -- Box "Number: 10"
 
 ```
+
+## Funtor 則
+
+TODO: 次ここかく
+
+- https://wiki.haskell.org/index.php?title=Functor
+- https://qiita.com/airtoxin/items/47327e9f8f5fa8d92e2d
+
+### 法則１ 恒等射の保存を満たす
+
+受け取った値をそのまま返す関数`id`があるとします。
+
+```haskell
+id x = x
+```
+
+この時、`fmap id`を適用しても、何も変化しないことを保証する必要があります。
+
+```haskell
+fmap id = id
+
+```
+
+#### 具体例
+
+```haskell
+data Box a = Box a deriving Show
+
+instance Functor Box where
+  fmap function (Box value) = Box (function value)
+
+box10 :: Box Int
+box10 = Box 10
+
+main :: IO ()
+main = do
+    print (fmap id box10) -- Box 10
+    print (id box10)      -- Box 10
+```
+
+### 法則２
 
 ## Applicative
 
