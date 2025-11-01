@@ -202,13 +202,13 @@ main = do
 
 ### Functor
 
-- https://www.nct9.ne.jp/m_hiroi/func/haskell14.html
-- https://wiki.haskell.org/index.php?title=Functor
-- https://qiita.com/suin/items/0255f0637921dcdfe83b
+https://www.nct9.ne.jp/m_hiroi/func/haskell14.html  
+https://wiki.haskell.org/index.php?title=Functor  
+https://qiita.com/suin/items/0255f0637921dcdfe83b.
 
 ### Applicative
 
-- https://www.nct9.ne.jp/m_hiroi/func/haskell14b.html
-- https://scrapbox.io/haskell-shoen/Applicative
-- https://haskell.jp/blog/posts/2019/regex-applicative.html
-- https://qiita.com/masaki_shoji/items/930434432fc3764685ba
+https://www.nct9.ne.jp/m_hiroi/func/haskell14b.html  
+https://scrapbox.io/haskell-shoen/Applicative  
+https://haskell.jp/blog/posts/2019/regex-applicative.html  
+https://qiita.com/masaki_shoji/items/930434432fc3764685ba
