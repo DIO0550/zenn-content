@@ -14,7 +14,7 @@ published: false
 
 1年ほど前から、自分用のプランモード＆実装モード用のスキルを作って運用していますが、個人的にかなり良い感じで実装ができています。
 
-元々作成しようと思ったきっかけは、Kiro の Spec モードを使用した際に、実装計画とタスクの md ファイルを作成することに感銘を受け、Claude Code でもこれに似たファイルを作成して実装を進めたいと考えたからです。
+元々作成しようと思ったきっかけは、Kiro の Spec モードを使用した際に、実装計画とタスクの md ファイルを作成することを面白いと感じ、Claude Code でもこれに似たファイルを作成して実装を進めたいと考えたからです。
 
 ## プランモードの限界
 
@@ -46,7 +46,7 @@ Claude Code の標準のプランモードは、基本的に Ask ツールでの
 └── notes/              # 探索結果や調査メモ
 ```
 
-この後の章では、このスキルの中で工夫している2つのポイント、「出力の分割設計」と「Hooks によるフェーズのガード」について書いていきます。
+この後の章では、このスキルの中で工夫しているポイントをいくつか紹介します。
 
 ## 工夫①: 出力を分割する設計
 
@@ -60,7 +60,23 @@ Claude Code の標準のプランモードは、基本的に Ask ツールでの
 
 要は、md 1枚に詰め込んだ状態だと難しかった「フェーズ単位での取り回し」を、ファイル分割によって成立させている、というのがポイントです。
 
-## 工夫②: Hooksによるガード
+## 工夫②: 出力形式を設定ファイルで切り替える
+
+用途によっては、md ではなく HTML で技術解説を出させたいケースがあります。そこでスキル側にはハードコードせず、設定ファイルで出力形式を切り替えられるようにしました。
+
+`.plugin-workspace/.specs/.config.yml` のようなファイルに、成果物ごとの出力形式を書いておくイメージです。
+
+```yaml
+output-formats:
+  implementation-plan: md
+  design-doc: md
+  tech-reference: html
+  test-cases: html   # レビューUIとして常にHTML
+```
+
+スキルの起動時にこの設定を読んで、`.md` を作るか `.html` を作るかを分岐させています。プラン起動のたびにプロンプトで「これは HTML で」と指示し直さなくてよいので、繰り返し使ったときの再現性が上がりました。テストケースのように、レビューUI として扱うぶん常に HTML で出したいものは、設定に関係なく強制的に `.html` にする、という例外もスキル側で持たせています。
+
+## 工夫③: Hooksによるガード
 
 もう一つの軸が、プランモード中はソースコードなどのファイルを勝手に書き換えられないようにする、というガードの仕組みです。ここは Claude Code の Hooks を使って実現しています。
 
@@ -135,9 +151,123 @@ Bash ツールについても同様に、リダイレクト（`>` / `>>`）や `
 
 ガードは、ユーザーが手動でガードファイルを削除することで解除されます。モデル側から `rm` でガードファイルを消そうとした場合も、Bash フック側で検出してブロックするようにしているので、意図せず自動的に実装フェーズへ移行してしまうことを防げます。
 
+## 工夫④: Hooksで実装計画にASCII図を強制する
+
+実装計画や設計書には、状態遷移図やデータフロー図を必ず含めたい、というのが自分ルールとしてあります。図で残しておくと、後から自分が読み直すときの理解コストが一気に下がるためです。
+
+そこで、`PostToolUse` フックで生成された md を検査し、規定の ASCII 図が含まれていなければリマインドを流すようにしています。
+
+具体的には、`implementation-plan.md` や `design-doc.md` への書き込みが走ったあとに、以下のようなチェックを回しています。
+
+```bash
+file_path=$(echo "$input" | jq -r '.tool_input.file_path // empty')
+
+case "$file_path" in
+  *implementation-plan*.md | *design-doc*.md) ;;
+  *) exit 0 ;;
+esac
+
+content=$(cat "$file_path")
+
+# 状態マシン / データフローの見出しがあるか
+grep -qE '^#{1,4}.*状態マシン'   <<<"$content" || missing+=("状態マシン図")
+grep -qE '^#{1,4}.*データフロー' <<<"$content" || missing+=("データフロー図")
+
+# 見出しの下に ASCII 罫線 or mermaid が書かれているか
+diagram_pattern='[┌┐└┘│─├┤┬┴┼▼▶▲◀→←↓↑]|```mermaid'
+```
+
+ここは `exit 2` でブロックまではせず、標準エラーへの指摘に留めています。ブロックすると生成の流れが止まってしまうので、「気付かせて、次のターンで足させる」くらいの温度感が扱いやすいと感じています。
+
+## 工夫⑤: Hooksでセッション名を自動リネームする
+
+複数の spec を並行で回していると、Claude Code のセッション一覧を見たときに「どれがどの spec のどのフェーズなのか」が分からなくなりがちです。
+
+これも Hooks で解決していて、`UserPromptSubmit` フックで、現在触っている spec 名やフェーズを組み合わせたセッションタイトルを自動で付与するようにしました。
+
+`UserPromptSubmit` は、フックの標準出力に `hookSpecificOutput.sessionTitle` を含む JSON を返すと、Claude Code 側がその値をセッションタイトルとして使ってくれます。それを利用して、こんな感じで組み立てています。
+
+```bash
+PROMPT=$(echo "$INPUT" | jq -r '.prompt // empty')
+
+case "$PROMPT" in
+  /spec-driven-dev*) LABEL="📋 plan" ;;
+  /spec-implement*)  LABEL="🔨 impl" ;;
+  *) exit 0 ;;
+esac
+
+# プロンプト or specs ディレクトリから spec 番号を拾って付与
+NUM=$(grep -oE '#[0-9]+' <<<"$PROMPT" | head -1)
+[ -n "$NUM" ] && LABEL="${LABEL} ${NUM}"
+
+jq -nc --arg t "$LABEL" \
+  '{hookSpecificOutput:{hookEventName:"UserPromptSubmit",sessionTitle:$t}}'
+```
+
+これで「📋 plan #003」「🔨 impl #002」のようなタイトルが自動で並ぶので、セッション一覧を眺めるだけで文脈が復元でき、切り替えの体験がかなり良くなりました。
+
+## 工夫⑥: 要件の未確定事項が残っている間は計画進行をブロックする
+
+実装計画に入る前段階として、`requirements.md` の中に「未解決の確認事項」チェックボックス（`□`）を持たせています。ここが残ったまま `implementation-plan.md` を書こうとすると、フック側でブロックがかかる仕組みです。
+
+チェックの流れはシンプルで、`implementation-plan` に対する Write / Edit が来たときだけ発動し、同じフォルダの `requirements.md` の該当セクションを覗きに行きます。
+
+```bash
+case "$FILE" in
+  *implementation-plan*) ;;
+  *) exit 0 ;;
+esac
+
+REQ_FILE="$(dirname "$FILE")/requirements.md"
+section=$(sed -n '/^#\{1,4\}.*未解決の確認事項/,/^#\{1,4\} /p' "$REQ_FILE")
+
+if echo "$section" | grep -qE '^[[:space:]]*□'; then
+  echo "【requirements】未解決事項が残っています: ${REQ_FILE}" >&2
+  exit 2
+fi
+```
+
+要件をふわっと残したまま計画に進んで、あとで「そこまだ決まってなかったよね？」となる典型的なミスを、構造的に起こせなくするのが狙いです。AutoMode で走らせているときも同じルールが効くので、勢いで先に進んでしまう事故を防げます。
+
+## 工夫⑦: PreCompactフックで「計画中である」ことを再周知する
+
+Claude Code はコンテキストが長くなると AutoCompact で会話を要約しますが、そのタイミングで「今は計画フェーズだ」というルールが薄まりがちです。
+
+そこで `PreCompact` フックを使い、PLANNING ファイルがある spec が存在する場合には「実装するな、計画に留まれ」という指示をもう一度モデル向けに流すようにしました。
+
+```bash
+files=$(find .plugin-workspace/.specs -name PLANNING 2>/dev/null)
+[ -z "$files" ] && exit 0
+
+printf "\n=== SPEC-DRIVEN PLANNING IN PROGRESS ===\n\n" >&2
+for f in $files; do
+  dir=$(dirname "$f")
+  echo "Planning: ${dir##*/}" >&2
+done
+printf "\nDO NOT IMPLEMENT CODE.\nContinue planning only.\n" >&2
+```
+
+フェーズ管理を PLANNING ファイルという単純なマーカーで表現しているおかげで、こういう横断的なリマインドがワンライナー気味に書けるのが気持ちいいポイントです。
+
+## 工夫⑧: Stopフックで完了specを自動アーカイブする
+
+セッション終了時、`Stop` フックで `.plugin-workspace/.specs/` の中を走査して、PLANNING ファイルが残っていない spec フォルダを `archive/` 配下に自動で移動するようにしています。
+
+```bash
+for dir in .plugin-workspace/.specs/[0-9][0-9][0-9]-*/; do
+  [ -d "$dir" ] || continue
+  [ -f "${dir}PLANNING" ] && continue  # まだ計画中はスキップ
+
+  mkdir -p .plugin-workspace/.specs/archive
+  mv "$dir" .plugin-workspace/.specs/archive/
+done
+```
+
+「PLANNING を消した ＝ 実装完了」という判定基準です。手動でやると絶対にサボりがちなアーカイブが、勝手に済んでいる状態を作れるので、ワークスペースが常にクリーンな状態で保たれます。
+
 ## まとめ
 
-このスキルの本質は、自分なりの出力形式で計画を立てられる点と、そのフェーズを Hooks で強制できる点です。プランモードそのものを AI に任せるのではなく、「どのファイルにどんな粒度で出力するか」「いつ実装を許可するか」という運用ルールを、自分の手元で設計できるのが気に入っています。
+このスキルの本質は、自分なりの出力形式やルールを、スキルと Hooks で強制できる点です。プランモードそのものを AI に任せるのではなく、「どのファイルにどんな粒度で出力するか」「いつ実装を許可するか」「どんな成果物を必ず含めるか」といった運用ルールを、自分の手元で設計できるのが気に入っています。
 
 ## 余談
 
