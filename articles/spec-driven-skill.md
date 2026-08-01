@@ -180,27 +180,7 @@ if echo "$section" | grep -qE '^[[:space:]]*□'; then
 fi
 ```
 
-### 6. PreCompactフックで「計画中である」ことを再周知する
-
-Claude Code はコンテキストが長くなると AutoCompact で会話を要約しますが、そのタイミングで「今は計画フェーズだ」というルールが薄まりがちです。
-
-そこで `PreCompact` フックを使い、PLANNING ファイルがある spec が存在する場合には「実装するな、計画に留まれ」という指示をもう一度モデル向けに流すようにしました。
-
-```bash
-files=$(find .plugin-workspace/.specs -name PLANNING 2>/dev/null)
-[ -z "$files" ] && exit 0
-
-printf "\n=== SPEC-DRIVEN PLANNING IN PROGRESS ===\n\n" >&2
-for f in $files; do
-  dir=$(dirname "$f")
-  echo "Planning: ${dir##*/}" >&2
-done
-printf "\nDO NOT IMPLEMENT CODE.\nContinue planning only.\n" >&2
-```
-
-フェーズ管理を PLANNING ファイルという単純なマーカーで表現しているおかげで、こういう横断的なリマインドがワンライナー気味に書けるのが気持ちいいポイントです。
-
-### 7. Stopフックで完了specを自動アーカイブする
+### 6. Stopフックで完了specを自動アーカイブする
 
 セッション終了時、`Stop` フックで `.plugin-workspace/.specs/` の中を走査して、PLANNING ファイルが残っていない spec フォルダを `archive/` 配下に自動で移動するようにしています。
 
