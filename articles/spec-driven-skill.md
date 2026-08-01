@@ -1,5 +1,5 @@
 ---
-title: "Claude Code 用にプランモード・実装モードのスキルを自作した話"
+title: "Claude Code 向けに自分用のプランモード・実装モードスキルを作った話"
 emoji: "📝"
 type: "tech"
 topics: ["claudecode", "ai", "hooks", "spec"]
