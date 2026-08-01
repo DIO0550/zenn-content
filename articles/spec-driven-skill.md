@@ -202,6 +202,4 @@ done
 
 ## 参考
 
-この記事で紹介したスキルとフックは、以下のリポジトリで公開しています。
-
 https://github.com/DIO0550/d-market-spec
