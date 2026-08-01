@@ -96,38 +96,7 @@ Claude Code の Hooks では、現在のセッション ID を含む情報が JS
 .plugin-workspace/.specs/.guard/{SESSION_ID}
 ```
 
-このファイルが存在している間は、`PreToolUse` フックで Write / Edit / Bash をブロックする、という単純な仕組みです。
-
-#### フック登録
-
-`hooks.json` で、`Write` / `Edit` / `MultiEdit` / `Bash` に対して `PreToolUse` フックを登録しています。
-
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Write",
-        "hooks": [
-          { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/guard-planning-writes.sh\"" }
-        ]
-      },
-      {
-        "matcher": "Edit|MultiEdit",
-        "hooks": [
-          { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/guard-planning-writes.sh\"" }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          { "type": "command", "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/guard-planning-writes.sh\"" }
-        ]
-      }
-    ]
-  }
-}
-```
+このファイルが存在している間は、`PreToolUse` フックで Write / Edit / MultiEdit / Bash をブロックする、という単純な仕組みです。
 
 #### ガードスクリプトの中身
 
