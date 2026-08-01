@@ -167,7 +167,7 @@ Bash ツールについても同様に、リダイレクト（`>` / `>>`）や `
 
 これも Hooks で解決していて、`UserPromptSubmit` フックで、現在触っている spec 名やフェーズを組み合わせたセッションタイトルを自動で付与するようにしました。
 
-`UserPromptSubmit` は、フックの標準出力に `hookSpecificOutput.sessionTitle` を含む JSON を返すと、Claude Code 側がその値をセッションタイトルとして使ってくれます。それを利用して、こんな感じで組み立てています。
+`UserPromptSubmit` は、フックの標準出力に `hookSpecificOutput.sessionTitle` を含む JSON を返すと、Claude Code 側がその値をセッションタイトルとして使ってくれます。以下のようなフックでタイトルを組み立てています。
 
 ```bash
 PROMPT=$(echo "$INPUT" | jq -r '.prompt // empty')
